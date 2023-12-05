@@ -27,8 +27,6 @@ optimizer = torch.optim.Adam(model.parameters(), lr=LR)
 compute_loss = torch.nn.CrossEntropyLoss(reduction='mean')
 
 # Metric Containers
-train_accuracy = Metric()
-test_accuracy = Metric()
 y_true_batches = []
 y_pred_batches = []
 
@@ -41,6 +39,8 @@ test_batch = 0
 train_batch = 0
 
 for epoch in range(EPOCHS):
+    train_accuracy = Metric()
+    test_accuracy = Metric()
     # Testing Loop
     for x_test, y_test in tqdm(test_loader, desc='Validation Batches', ncols=80):
         test_batch += 1
@@ -95,8 +95,5 @@ for epoch in range(EPOCHS):
     experiment.set_stage(Stage.TRAIN)
     experiment.add_epoch_metric('accuracy', train_accuracy.average, epoch)
 
-    # Reset metrics
-    train_accuracy = Metric()
-    test_accuracy = Metric()
 
 experiment.flush()
