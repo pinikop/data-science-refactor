@@ -1,5 +1,6 @@
 from abc import ABC, abstractmethod
 from dataclasses import dataclass
+from enum import Enum, auto
 from numbers import Real
 from pathlib import Path
 from typing import Union, Tuple
@@ -10,15 +11,12 @@ from sklearn.metrics import confusion_matrix, ConfusionMatrixDisplay
 from torch.utils.tensorboard import SummaryWriter
 
 
-@dataclass(frozen=True)
-class Stage:
-    TRAIN: str = 'train'
-    TEST: str = 'test'
-    VAL: str = 'val'
-
+class Stage(Enum):
+    TRAIN = auto()
+    TEST = auto()
+    VAL = auto()
 
 class ExperimentTracker(ABC):
-    stage: str
 
     @abstractmethod
     def add_batch_metric(self, name: str, value: Real, step: int):
@@ -46,13 +44,14 @@ class ExperimentTracker(ABC):
 
 
 class TensorboardExperiment(ExperimentTracker):
+    stage: Stage
 
     def __init__(self, log_dir: str, create=True):
         self._validate_log_dir(log_dir, create=create)
         self._writer = SummaryWriter(log_dir=log_dir)
         plt.ioff()
 
-    def set_stage(self, stage: str):
+    def set_stage(self, stage: Stage):
         self.stage = stage
         return self
 
@@ -70,17 +69,17 @@ class TensorboardExperiment(ExperimentTracker):
             raise NotADirectoryError(f'log_dir {log_dir} does not exist.')
 
     def add_batch_metric(self, name: str, value: Real, step: int):
-        tag = f'{self.stage}/batch/{name}'
+        tag = f'{self.stage.name}/batch/{name}'
         self._writer.add_scalar(tag, value, step)
 
     def add_epoch_metric(self, name: str, value: Real, step: int):
-        tag = f'{self.stage}/epoch/{name}'
+        tag = f'{self.stage.name}/epoch/{name}'
         self._writer.add_scalar(tag, value, step)
 
     def add_epoch_confusion_matrix(self, y_true: list[np.array], y_pred: list[np.array], step: int):
         y_true, y_pred = self.collapse_batches(y_true, y_pred)
         fig = self.create_confusion_matrix(y_true, y_pred, step)
-        tag = f'{self.stage}/epoch/confusion_matrix'
+        tag = f'{self.stage.name}/epoch/confusion_matrix'
         self._writer.add_figure(tag, fig, step)
 
     @staticmethod
@@ -91,7 +90,7 @@ class TensorboardExperiment(ExperimentTracker):
         cm = ConfusionMatrixDisplay(confusion_matrix(y_true, y_pred)).plot(cmap='Blues')
         fig: plt.Figure = cm.figure_
         ax: plt.Axes = cm.ax_
-        ax.set_title(f'{self.stage.title()} Epoch: {step}')
+        ax.set_title(f'{self.stage.name} Epoch: {step}')
         return fig
 
     def add_hparams(self, hparams: dict[str, Union[str, Real]], metrics: dict[str, Real]):
