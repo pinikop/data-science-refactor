@@ -1,14 +1,12 @@
-from abc import ABC
-from dataclasses import dataclass
 from enum import Enum, auto
 from numbers import Real
 from pathlib import Path
-from typing import Protocol, Union, Tuple
+from typing import Protocol, Tuple, Union
 
 import numpy as np
 from matplotlib import pyplot as plt
-from sklearn.metrics import confusion_matrix, ConfusionMatrixDisplay
-from torch.utils.tensorboard import SummaryWriter
+from sklearn.metrics import ConfusionMatrixDisplay, confusion_matrix
+from torch.utils.tensorboard.writer import SummaryWriter
 
 
 class Stage(Enum):
