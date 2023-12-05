@@ -6,7 +6,8 @@ from tqdm import tqdm
 from src.dataset import get_train_dataloader, get_test_dataloader
 from src.metrics import Metric
 from src.models import LinearNet
-from src.tracking import TensorboardExperiment, Stage
+from src.tracking import Stage
+from src.tensorboard import TensorboardExperiment
 from src.utils import generate_tensorboard_experiment_directory
 
 # Hyperparameters
