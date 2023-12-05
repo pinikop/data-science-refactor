@@ -1,17 +1,11 @@
+from enum import Enum
 import gzip
 import struct
 from pathlib import Path
 
 import numpy as np
 
-ALLOWED_TYPES = {
-    "UNSIGNED_BYTE": b"\x08",
-    "SIGNED_BYTE": b"\x09",
-    "SHORT": b"\x0B",
-    "INT": b"\x0C",
-    "SINGLE": b"\x0D",
-    "DOUBLE": b"\x0E",
-}
+_UNSIGNED_BYTE = b"\x08"
 
 
 def load_image_data(file_path: Path):
@@ -19,7 +13,7 @@ def load_image_data(file_path: Path):
         _ = struct.unpack(">H", fp.read(2))  # dump padding bytes
 
         (data_type,) = struct.unpack(">c", fp.read(1))
-        assert data_type == ALLOWED_TYPES["UNSIGNED_BYTE"]
+        assert data_type == _UNSIGNED_BYTE
 
         number_of_dimensions = ord(struct.unpack(">c", fp.read(1))[0])
         assert number_of_dimensions == 3
@@ -43,7 +37,7 @@ def load_labels(file_path: Path):
         _ = struct.unpack(">H", fp.read(2))  # dump padding bytes
 
         (data_type,) = struct.unpack(">c", fp.read(1))
-        assert data_type == ALLOWED_TYPES["UNSIGNED_BYTE"]
+        assert data_type == _UNSIGNED_BYTE
 
         number_of_dimensions = ord(struct.unpack(">c", fp.read(1))[0])
         assert number_of_dimensions == 1
