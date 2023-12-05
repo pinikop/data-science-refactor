@@ -10,20 +10,17 @@ from src.tracking import TensorboardExperiment, Stage
 from src.utils import generate_tensorboard_experiment_directory
 
 # Hyperparameters
-hparams = {
-    'EPOCHS': 20,
-    'LR': 5e-5,
-    'OPTIMIZER': 'Adam',
-    'BATCH_SIZE': 128
-}
+EPOCHS = 20
+LR = 5e-5
+BATCH_SIZE = 128
 
 # Data
-train_loader = get_train_dataloader(batch_size=hparams.get('BATCH_SIZE'))
-test_loader = get_test_dataloader(batch_size=hparams.get('BATCH_SIZE'))
+train_loader = get_train_dataloader(batch_size=BATCH_SIZE)
+test_loader = get_test_dataloader(batch_size=BATCH_SIZE)
 
 # Model and Optimizer
 model = LinearNet()
-optimizer = torch.optim.Adam(model.parameters(), lr=hparams.get('LR'))
+optimizer = torch.optim.Adam(model.parameters(), lr=LR)
 
 # Objective (loss) function
 compute_loss = torch.nn.CrossEntropyLoss(reduction='mean')
@@ -42,7 +39,7 @@ experiment = TensorboardExperiment(log_dir=log_dir)
 test_batch = 0
 train_batch = 0
 
-for epoch in range(hparams.get('EPOCHS')):
+for epoch in range(EPOCHS):
     # Testing Loop
     for x_test, y_test in tqdm(test_loader, desc='Validation Batches', ncols=80):
         test_batch += 1
@@ -82,7 +79,7 @@ for epoch in range(hparams.get('EPOCHS')):
 
     # Compute Average Epoch Metrics
     summary = ', '.join([
-        f"[Epoch: {epoch + 1}/{hparams.get('EPOCHS')}]",
+        f"[Epoch: {epoch + 1}/{EPOCHS}]",
         f"Test Accuracy: {test_accuracy.average: 0.4f}",
         f"Train Accuracy: {train_accuracy.average: 0.4f}",
     ])
