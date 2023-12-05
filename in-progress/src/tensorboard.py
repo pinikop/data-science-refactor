@@ -1,4 +1,3 @@
-from numbers import Real
 from pathlib import Path
 from typing import Tuple, Union
 
@@ -34,11 +33,11 @@ class TensorboardExperiment:
         else:
             raise NotADirectoryError(f'log_dir {log_dir} does not exist.')
 
-    def add_batch_metric(self, name: str, value: Real, step: int):
+    def add_batch_metric(self, name: str, value: float, step: int):
         tag = f'{self.stage.name}/batch/{name}'
         self._writer.add_scalar(tag, value, step)
 
-    def add_epoch_metric(self, name: str, value: Real, step: int):
+    def add_epoch_metric(self, name: str, value: float, step: int):
         tag = f'{self.stage.name}/epoch/{name}'
         self._writer.add_scalar(tag, value, step)
 
@@ -59,7 +58,7 @@ class TensorboardExperiment:
         ax.set_title(f'{self.stage.name} Epoch: {step}')
         return fig
 
-    def add_hparams(self, hparams: dict[str, Union[str, Real]], metrics: dict[str, Real]):
+    def add_hparams(self, hparams: dict[str, Union[str, float]], metrics: dict[str, float]):
         _metrics = self._validate_hparam_metric_keys(metrics)
         self._writer.add_hparams(hparams, _metrics)
 
