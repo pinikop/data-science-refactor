@@ -34,14 +34,6 @@ class ExperimentTracker(ABC):
     def add_hparams(self, hparams: dict[str, Union[str, Real]], metrics: dict[str, Real]):
         """Implements logging hyperparameters."""
 
-    def add_batch_metrics(self, values: dict[str, Real], step: int):
-        for name, value in values.items():
-            self.add_batch_metric(name, value, step)
-
-    def add_epoch_metrics(self, values: dict[str, Real], step: int):
-        for name, value in values.items():
-            self.add_epoch_metric(name, value, step)
-
 
 class TensorboardExperiment(ExperimentTracker):
     stage: Stage
