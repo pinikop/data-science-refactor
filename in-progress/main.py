@@ -1,5 +1,8 @@
+from pathlib import Path
+
 import torch
-from src.dataset import get_test_dataloader, get_train_dataloader
+
+from src.dataset import create_dataloader
 from src.models import LinearNet
 from src.runner import Runner, run_epoch
 from src.tensorboard import TensorboardExperiment
@@ -11,14 +14,22 @@ LR = 5e-5
 BATCH_SIZE = 128
 LOG_PATH = "./runs"
 
+# Data configuration
+DATA_DIR = Path(__file__).parent / 'data'
+TEST_DATA = DATA_DIR / "t10k-images-idx3-ubyte.gz"
+TEST_LABELS = DATA_DIR / "t10k-labels-idx1-ubyte.gz"
+TRAIN_DATA = DATA_DIR / "train-images-idx3-ubyte.gz"
+TRAIN_LABELS = DATA_DIR / "train-labels-idx1-ubyte.gz"
+
+
 def main():
     # Model and Optimizer
     model = LinearNet()
     optimizer = torch.optim.Adam(model.parameters(), lr=LR)
 
     # Data
-    train_loader = get_train_dataloader(batch_size=BATCH_SIZE)
-    test_loader = get_test_dataloader(batch_size=BATCH_SIZE)
+    train_loader = create_dataloader(TRAIN_DATA, TRAIN_LABELS, batch_size=BATCH_SIZE)
+    test_loader = create_dataloader(TEST_DATA, TEST_LABELS, batch_size=BATCH_SIZE, shuffle=False)
 
     # Create the Runners
     test_runner = Runner(test_loader, model)

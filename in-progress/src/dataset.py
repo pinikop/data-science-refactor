@@ -1,8 +1,10 @@
+from pathlib import Path
+from typing import Any
+
 import numpy as np
 import torch
-from torch.utils.data import Dataset, DataLoader
-
-from src.load_data import load_train_labels, load_train_data, load_test_data, load_test_labels
+from src.load_data import load_image_data, load_labels
+from torch.utils.data import DataLoader, Dataset
 
 
 class MNIST(Dataset):
@@ -54,19 +56,19 @@ class MNIST(Dataset):
         self.y = torch.tensor(self.y, dtype=torch.long)
 
 
-def get_train_dataloader(batch_size: int) -> DataLoader:
-    return DataLoader(
-        dataset=MNIST(load_train_data(), load_train_labels()),
-        batch_size=batch_size,
-        shuffle=True,
-        num_workers=0,
-    )
+def create_dataloader(
+    data_path: Path,
+    labels_path: Path,
+    batch_size: int,
+    shuffle: bool = True
+    ) -> DataLoader[Any]:
 
+    data = load_image_data(data_path)
+    labels = load_labels(labels_path)
 
-def get_test_dataloader(batch_size: int) -> DataLoader:
     return DataLoader(
-        dataset=MNIST(load_test_data(), load_test_labels()),
+        dataset=MNIST(data, labels),
         batch_size=batch_size,
-        shuffle=False,
+        shuffle=shuffle,
         num_workers=0,
     )
