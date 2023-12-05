@@ -96,7 +96,7 @@ for epoch in range(EPOCHS):
     experiment.add_epoch_metric('accuracy', train_accuracy.average, epoch)
 
     # Reset metrics
-    train_accuracy.reset()
-    test_accuracy.reset()
+    train_accuracy = Metric()
+    test_accuracy = Metric()
 
 experiment.flush()
