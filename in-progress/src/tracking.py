@@ -30,6 +30,12 @@ class ExperimentTracker(Protocol):
     def add_hparams(self, hparams: dict[str, Union[str, Real]], metrics: dict[str, Real]):
         """Implements logging hyperparameters."""
 
+    def set_stage(self, stage: Stage):
+        """Sets the stage of the experiment."""
+
+    def flush(self):
+        """Flushes the experiment."""
+
 
 class TensorboardExperiment(ExperimentTracker):
     stage: Stage
