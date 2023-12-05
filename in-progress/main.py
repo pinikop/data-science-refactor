@@ -3,14 +3,13 @@ from src.dataset import get_test_dataloader, get_train_dataloader
 from src.models import LinearNet
 from src.runner import Runner, run_epoch
 from src.tensorboard import TensorboardExperiment
-from src.tracking import Stage
 from src.utils import generate_tensorboard_experiment_directory
-
 
 # Hyperparameters
 EPOCHS = 20
 LR = 5e-5
 BATCH_SIZE = 128
+LOG_PATH = "./runs"
 
 def main():
     # Model and Optimizer
@@ -26,7 +25,7 @@ def main():
     train_runner = Runner(train_loader, model, optimizer)
 
     # Experiment Trackers
-    log_dir = generate_tensorboard_experiment_directory(root='./runs')
+    log_dir = generate_tensorboard_experiment_directory(root=LOG_PATH)
     experiment = TensorboardExperiment(log_dir=log_dir)
 
     for epoch in range(EPOCHS):
