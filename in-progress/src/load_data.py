@@ -1,4 +1,3 @@
-from enum import Enum
 import gzip
 import struct
 from pathlib import Path
