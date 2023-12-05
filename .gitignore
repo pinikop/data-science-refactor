@@ -1,5 +1,4 @@
-after/runs/**
-before/runs/**
+**/runs/**
 **/*.pyc
 **/.DS_Store
 **/.vscode
