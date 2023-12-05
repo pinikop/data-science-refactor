@@ -1,9 +1,9 @@
-from abc import ABC, abstractmethod
+from abc import ABC
 from dataclasses import dataclass
 from enum import Enum, auto
 from numbers import Real
 from pathlib import Path
-from typing import Union, Tuple
+from typing import Protocol, Union, Tuple
 
 import numpy as np
 from matplotlib import pyplot as plt
@@ -16,21 +16,17 @@ class Stage(Enum):
     TEST = auto()
     VAL = auto()
 
-class ExperimentTracker(ABC):
+class ExperimentTracker(Protocol):
 
-    @abstractmethod
     def add_batch_metric(self, name: str, value: Real, step: int):
         """Implements logging a batch-level metric."""
 
-    @abstractmethod
     def add_epoch_metric(self, name: str, value: Real, step: int):
         """Implements logging a epoch-level metric."""
 
-    @abstractmethod
     def add_epoch_confusion_matrix(self, y_true: np.array, y_pred: np.array, step: int):
         """Implements logging a confusion matrix at epoch-level."""
 
-    @abstractmethod
     def add_hparams(self, hparams: dict[str, Union[str, Real]], metrics: dict[str, Real]):
         """Implements logging hyperparameters."""
 
