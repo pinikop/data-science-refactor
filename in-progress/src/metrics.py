@@ -1,12 +1,14 @@
 
-class Metric:
-    values: list[float]
-    running_total: float
-    num_updates: float
-    average: float
+from dataclasses import dataclass, field
 
-    def __init__(self):
-        self.reset()
+
+@dataclass
+class Metric:
+    values: list[float] = field(default_factory=list)
+    running_total: float = 0.0
+    num_updates: float = 0.0
+    average: float = 0.0
+
 
     def __str__(self):
         return f"Metric(average={self.average:0.4f})"
@@ -16,9 +18,3 @@ class Metric:
         self.running_total += value * batch_size
         self.num_updates += batch_size
         self.average = self.running_total / self.num_updates
-
-    def reset(self):
-        self.values: list[float] = []
-        self.running_total: float = 0.0
-        self.num_updates: float = 0.0
-        self.average: float = 0.0
