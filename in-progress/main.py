@@ -1,7 +1,7 @@
 import torch
 from src.dataset import get_test_dataloader, get_train_dataloader
 from src.models import LinearNet
-from src.runner import Runner
+from src.runner import Runner, run_epoch
 from src.tensorboard import TensorboardExperiment
 from src.tracking import Stage
 from src.utils import generate_tensorboard_experiment_directory
@@ -30,31 +30,7 @@ def main():
     experiment = TensorboardExperiment(log_dir=log_dir)
 
     for epoch in range(EPOCHS):
-        experiment.set_stage(Stage.TRAIN)
-        train_runner.run('Train batches', experiment)
-
-        experiment.add_epoch_metric('accuracy', train_runner.avg_accuracy, epoch)
-
-        experiment.set_stage(Stage.VAL)
-        test_runner.run('Validation batches', experiment)
-
-        experiment.add_epoch_metric('accuracy', test_runner.avg_accuracy, epoch)
-        experiment.add_epoch_confusion_matrix(
-            test_runner.y_true_batches,
-            test_runner.y_pred_batches,
-            epoch
-            )
-
-        # Compute Average Epoch Metrics
-        summary = ', '.join([
-            f"[Epoch: {epoch + 1}/{EPOCHS}]",
-            f"Test Accuracy: {test_runner.avg_accuracy: 0.4f}",
-            f"Train Accuracy: {train_runner.avg_accuracy: 0.4f}",
-        ])
-        print('\n' + summary + '\n')
-
-        train_runner.reset()
-        test_runner.reset()
+        run_epoch(test_runner, train_runner, experiment, epoch, EPOCHS)
 
     experiment.flush()
 

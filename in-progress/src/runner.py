@@ -4,7 +4,7 @@ import numpy as np
 import torch
 from sklearn.metrics import accuracy_score
 from src.metrics import Metric
-from src.tracking import ExperimentTracker
+from src.tracking import ExperimentTracker, Stage
 from torch.utils.data.dataloader import DataLoader
 from tqdm import tqdm
 
@@ -66,3 +66,38 @@ class Runner:
         self.accuracy_metric = Metric()
         self.y_true_batches = []
         self.y_pred_batches = []
+
+
+def run_epoch(
+    test_runner: Runner,
+    train_runner: Runner,
+    experiment: ExperimentTracker,
+    epoch: int,
+    epochs_total: int,
+    ):
+
+    experiment.set_stage(Stage.TRAIN)
+    train_runner.run('Train batches', experiment)
+
+    experiment.add_epoch_metric('accuracy', train_runner.avg_accuracy, epoch)
+
+    experiment.set_stage(Stage.VAL)
+    test_runner.run('Validation batches', experiment)
+
+    experiment.add_epoch_metric('accuracy', test_runner.avg_accuracy, epoch)
+    experiment.add_epoch_confusion_matrix(
+        test_runner.y_true_batches,
+        test_runner.y_pred_batches,
+        epoch
+        )
+
+    # Compute Average Epoch Metrics
+    summary = ', '.join([
+        f"[Epoch: {epoch + 1}/{epochs_total}]",
+        f"Test Accuracy: {test_runner.avg_accuracy: 0.4f}",
+        f"Train Accuracy: {train_runner.avg_accuracy: 0.4f}",
+    ])
+    print('\n' + summary + '\n')
+
+    train_runner.reset()
+    test_runner.reset()
