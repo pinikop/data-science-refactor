@@ -1,6 +1,6 @@
 import gzip
 from pathlib import Path
-from typing import Any
+from typing import Tuple
 
 import numpy as np
 import numpy.typing as npt
@@ -24,15 +24,15 @@ class MNIST(Dataset):
         self.data = data
         self.targets = targets
 
-    def __len__(self):
+    def __len__(self) -> int:
         return len(self.data)
 
-    def __getitem__(self, idx) -> tuple[torch.Tensor, torch.Tensor]:
+    def __getitem__(self, idx: int) -> Tuple[torch.Tensor, torch.Tensor]:
         x = self._get_x(idx)
         y = self._get_y(idx)
         return x, y
 
-    def _get_x(self, idx: int):
+    def _get_x(self, idx: int) -> torch.Tensor:
         x = self.data[idx].astype(np.float32)
         x /= self.NORMALIZE_FACTOR
         x = (x - self.MU) / self.STD
@@ -40,7 +40,7 @@ class MNIST(Dataset):
         x = x.unsqueeze(0)
         return x
 
-    def _get_y(self, idx: int):
+    def _get_y(self, idx: int) -> torch.Tensor:
         y = self.targets[idx]
         return torch.tensor(y, dtype=torch.long)
 
@@ -50,20 +50,43 @@ def create_dataloader(
     labels_path: Path,
     batch_size: int,
     shuffle: bool = True
-    ) -> DataLoader[Any]:
+    ) -> DataLoader[Tuple[torch.Tensor, torch.Tensor]]:
+    """
+    Creates a DataLoader for the MNIST dataset.
 
-    data = load_mnist_file(data_path)
-    labels = load_mnist_file(labels_path)
+    Args:
+        data_path (Path): Path to the MNIST data file.
+        labels_path (Path): Path to the MNIST labels file.
+        batch_size (int): Batch size for the DataLoader.
+        shuffle (bool, optional): Whether to shuffle the data during training. Defaults to True.
 
-    return DataLoader(
+    Returns:
+        DataLoader[Any]: A DataLoader object for training a neural network on the MNIST dataset.
+    """
+
+    data = load_data(data_path)
+    labels = load_data(labels_path)
+    loader = DataLoader(
         dataset=MNIST(data, labels),
         batch_size=batch_size,
         shuffle=shuffle,
         num_workers=0,
     )
 
+    return loader
 
-def load_mnist_file(file_name: Path) -> npt.NDArray:
+
+def load_data(file_name: Path) -> npt.NDArray:
+    """
+    Load a MNIST data file and return a NumPy array.
+
+    Args:
+        file_path (Path): The path to the MNIST data file.
+
+    Returns:
+        np.ndarray: A NumPy array containing the data from the file.
+    """
+
     # Load the specified file
     if 'images' in file_name.stem:
         offset = 16
