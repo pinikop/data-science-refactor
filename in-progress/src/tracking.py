@@ -21,9 +21,6 @@ class ExperimentTracker(Protocol):
     def add_epoch_confusion_matrix(self, y_true: list[npt.NDArray], y_pred: list[npt.NDArray], step: int):
         """Implements logging a confusion matrix at epoch-level."""
 
-    def add_hparams(self, hparams: dict[str, Union[str, float]], metrics: dict[str, float]):
-        """Implements logging hyperparameters."""
-
     def set_stage(self, stage: Stage):
         """Sets the stage of the experiment."""
 
