@@ -2,7 +2,9 @@ from pathlib import Path
 from typing import Union
 
 
-def generate_tensorboard_experiment_directory(root: Union[str, Path], parents=True) -> str:
+def generate_tensorboard_experiment_directory(
+    root: Union[str, Path], parents=True
+) -> str:
     """Generates a unique experiment directory.
 
     Args:
@@ -15,8 +17,10 @@ def generate_tensorboard_experiment_directory(root: Union[str, Path], parents=Tr
     root_path = Path(root).resolve()
     if not root_path.exists():
         root_path.mkdir(parents=parents)
-    children = [int(c.name) for c in root_path.glob('*') if (c.is_dir() and c.name.isnumeric())]
-    experiment = '0' if len(children) == 0 else str(max(children) + 1)
+    children = [
+        int(c.name) for c in root_path.glob("*") if (c.is_dir() and c.name.isnumeric())
+    ]
+    experiment = str(max(children) + 1) if len(children) else "0"
     experiment = root_path / experiment
     experiment.mkdir(parents=parents)
     return experiment.as_posix()

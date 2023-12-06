@@ -10,15 +10,17 @@ class Stage(Enum):
     TEST = auto()
     VAL = auto()
 
-class ExperimentTracker(Protocol):
 
+class ExperimentTracker(Protocol):
     def add_batch_metric(self, name: str, value: np.float32, step: int):
         """Implements logging a batch-level metric."""
 
     def add_epoch_metric(self, name: str, value: np.float32, step: int):
         """Implements logging a epoch-level metric."""
 
-    def add_epoch_confusion_matrix(self, y_true: list[npt.NDArray], y_pred: list[npt.NDArray], step: int):
+    def add_epoch_confusion_matrix(
+        self, y_true: list[npt.NDArray], y_pred: list[npt.NDArray], step: int
+    ):
         """Implements logging a confusion matrix at epoch-level."""
 
     def set_stage(self, stage: Stage):

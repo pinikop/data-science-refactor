@@ -1,7 +1,6 @@
 from pathlib import Path
 
 import torch
-
 from src.dataset import create_dataloader
 from src.models import LinearNet
 from src.runner import Runner, run_epoch
@@ -13,10 +12,10 @@ EPOCHS = 20
 LR = 5e-5
 BATCH_SIZE = 128
 ROOT_PATH = Path(__file__).parent
-LOG_PATH =  ROOT_PATH / 'runs'
+LOG_PATH = ROOT_PATH / "runs"
 
 # Data configuration
-DATA_DIR = ROOT_PATH / 'data'
+DATA_DIR = ROOT_PATH / "data"
 TEST_DATA = DATA_DIR / "t10k-images-idx3-ubyte.gz"
 TEST_LABELS = DATA_DIR / "t10k-labels-idx1-ubyte.gz"
 TRAIN_DATA = DATA_DIR / "train-images-idx3-ubyte.gz"
@@ -30,7 +29,9 @@ def main():
 
     # Data
     train_loader = create_dataloader(TRAIN_DATA, TRAIN_LABELS, batch_size=BATCH_SIZE)
-    test_loader = create_dataloader(TEST_DATA, TEST_LABELS, batch_size=BATCH_SIZE, shuffle=False)
+    test_loader = create_dataloader(
+        TEST_DATA, TEST_LABELS, batch_size=BATCH_SIZE, shuffle=False
+    )
 
     # Create the Runners
     test_runner = Runner(test_loader, model)
@@ -46,5 +47,5 @@ def main():
     tracker.flush()
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()

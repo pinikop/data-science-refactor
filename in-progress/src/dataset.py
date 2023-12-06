@@ -18,8 +18,10 @@ class MNIST(Dataset):
 
     def __init__(self, data: npt.NDArray, targets: npt.NDArray):
         if len(data) != len(targets):
-            raise ValueError('data and targets must be the same length. '
-                             f'{len(data)} != {len(targets)}')
+            raise ValueError(
+                "data and targets must be the same length. "
+                f"{len(data)} != {len(targets)}"
+            )
 
         self.data = data
         self.targets = targets
@@ -48,11 +50,8 @@ class MNIST(Dataset):
 
 
 def create_dataloader(
-    data_path: Path,
-    labels_path: Path,
-    batch_size: int,
-    shuffle: bool = True
-    ) -> DataLoader[Tuple[torch.Tensor, torch.Tensor]]:
+    data_path: Path, labels_path: Path, batch_size: int, shuffle: bool = True
+) -> DataLoader[Tuple[torch.Tensor, torch.Tensor]]:
     """
     Creates a DataLoader for the MNIST dataset.
 
@@ -91,14 +90,14 @@ def load_data(file_name: Path) -> npt.NDArray:
     """
 
     # set the values of offset and shape for images or labels
-    if 'images' in file_name.stem:
+    if "images" in file_name.stem:
         offset = 16
         shape = (-1, 28, 28)
     else:
         offset = 8
         shape = (-1,)
 
-    with gzip.open(file_name, 'rb') as f:
+    with gzip.open(file_name, "rb") as f:
         data = np.frombuffer(f.read(), np.uint8, offset=offset)
 
     # Reshape the data to a 28x28 NumPy array if it is an image file, or a 1-dimensional NumPy array if it is a label file

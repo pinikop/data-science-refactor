@@ -17,25 +17,22 @@ class Runner:
         model: torch.nn.Module,
         optimizer: Optional[torch.optim.Optimizer] = None,
         # loss: Optional[torch.nn.Module] = None
-        ) -> None:
-
+    ) -> None:
         self.iteration = 0
         self.loader = loader
         self.model = model
         self.optimizer = optimizer
         self.accuracy_metric = Metric()
         if self.optimizer is not None:
-            self.compute_loss = torch.nn.CrossEntropyLoss(reduction='mean')
+            self.compute_loss = torch.nn.CrossEntropyLoss(reduction="mean")
 
         self.y_true_batches: list[npt.NDArray] = []
         self.y_pred_batches: list[npt.NDArray] = []
-
 
     @property
     def avg_accuracy(self) -> np.float32:
         """Average accuracy."""
         return self.accuracy_metric.average
-
 
     def run_loop(self, desc: str, tracker: ExperimentTracker) -> None:
         """Runs the training loop for one epoch.
@@ -46,8 +43,7 @@ class Runner:
         """
         for x, y in tqdm(self.loader, desc=desc, ncols=80):
             batch_accuracy = self._run_single_iteration(x, y)
-            tracker.add_batch_metric('accuracy', batch_accuracy, self.iteration)
-
+            tracker.add_batch_metric("accuracy", batch_accuracy, self.iteration)
 
     def _run_single_iteration(self, x: torch.Tensor, y: torch.Tensor) -> np.float32:
         """run a single iteration of the training loop.
@@ -95,30 +91,29 @@ def run_epoch(
     experiment: ExperimentTracker,
     epoch: int,
     epochs_total: int,
-    ):
-
+):
     experiment.set_stage(Stage.TRAIN)
-    train_runner.run_loop('Train batches', experiment)
+    train_runner.run_loop("Train batches", experiment)
 
-    experiment.add_epoch_metric('accuracy', train_runner.avg_accuracy, epoch)
+    experiment.add_epoch_metric("accuracy", train_runner.avg_accuracy, epoch)
 
     experiment.set_stage(Stage.VAL)
-    test_runner.run_loop('Validation batches', experiment)
+    test_runner.run_loop("Validation batches", experiment)
 
-    experiment.add_epoch_metric('accuracy', test_runner.avg_accuracy, epoch)
+    experiment.add_epoch_metric("accuracy", test_runner.avg_accuracy, epoch)
     experiment.add_epoch_confusion_matrix(
-        test_runner.y_true_batches,
-        test_runner.y_pred_batches,
-        epoch
-        )
+        test_runner.y_true_batches, test_runner.y_pred_batches, epoch
+    )
 
     # Compute Average Epoch Metrics
-    summary = ', '.join([
-        f"[Epoch: {epoch + 1}/{epochs_total}]",
-        f"Test Accuracy: {test_runner.avg_accuracy: 0.4f}",
-        f"Train Accuracy: {train_runner.avg_accuracy: 0.4f}",
-    ])
-    print('\n' + summary + '\n')
+    summary = ", ".join(
+        [
+            f"[Epoch: {epoch + 1}/{epochs_total}]",
+            f"Test Accuracy: {test_runner.avg_accuracy: 0.4f}",
+            f"Train Accuracy: {train_runner.avg_accuracy: 0.4f}",
+        ]
+    )
+    print("\n" + summary + "\n")
 
     train_runner.reset()
     test_runner.reset()
