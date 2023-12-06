@@ -1,5 +1,5 @@
 from enum import Enum, auto
-from typing import Protocol, Union
+from typing import Protocol
 
 import numpy as np
 import numpy.typing as npt
