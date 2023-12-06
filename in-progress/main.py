@@ -12,10 +12,11 @@ from src.utils import generate_tensorboard_experiment_directory
 EPOCHS = 20
 LR = 5e-5
 BATCH_SIZE = 128
-LOG_PATH = "./runs"
+ROOT_PATH = Path(__file__).parent
+LOG_PATH =  ROOT_PATH / 'runs'
 
 # Data configuration
-DATA_DIR = Path(__file__).parent / 'data'
+DATA_DIR = ROOT_PATH / 'data'
 TEST_DATA = DATA_DIR / "t10k-images-idx3-ubyte.gz"
 TEST_LABELS = DATA_DIR / "t10k-labels-idx1-ubyte.gz"
 TRAIN_DATA = DATA_DIR / "train-images-idx3-ubyte.gz"

@@ -1,29 +1,22 @@
 from pathlib import Path
+from typing import Union
 
 
-def generate_tensorboard_experiment_directory(root: str, parents=True) -> str:
-    root = Path(root).resolve()
-    child = create_from_missing(root) if not root.exists() else create_from_existing(root)
-    child.mkdir(parents=parents)
-    return child.as_posix()
+def generate_tensorboard_experiment_directory(root: Union[str, Path], parents=True) -> str:
+    """Generates a unique experiment directory.
 
+    Args:
+        root (str or Path): root directory
+        parents (bool): whether to create parent directories
 
-def create_from_missing(root):
-    return root / '0'
-
-
-def create_from_existing(root):
-    children = [int(c.name) for c in root.glob('*') if (c.is_dir() and c.name.isnumeric())]
-    if is_first_experiment(children):
-        child = root / '0'
-    else:
-        child = root / increment_experiment_number(children)
-    return child
-
-
-def is_first_experiment(children: list[int]) -> bool:
-    return len(children) == 0
-
-
-def increment_experiment_number(children: list[int]) -> str:
-    return str(max(children) + 1)
+    Returns:
+        str: experiment directory
+    """
+    root_path = Path(root).resolve()
+    if not root_path.exists():
+        root_path.mkdir(parents=parents)
+    children = [int(c.name) for c in root_path.glob('*') if (c.is_dir() and c.name.isnumeric())]
+    experiment = '0' if len(children) == 0 else str(max(children) + 1)
+    experiment = root_path / experiment
+    experiment.mkdir(parents=parents)
+    return experiment.as_posix()
