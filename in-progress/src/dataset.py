@@ -1,10 +1,10 @@
+import gzip
 from pathlib import Path
 from typing import Any
 
 import numpy as np
 import numpy.typing as npt
 import torch
-from src.load_data import load_image_data, load_labels
 from torch.utils.data import DataLoader, Dataset
 
 
@@ -12,7 +12,7 @@ class MNIST(Dataset):
     x: torch.Tensor
     y: torch.Tensor
 
-    TRAIN_MAX = 255.0
+    NORMALIZE_FACTOR = 255.0
     MU = 0.1306604762738429
     STD = 0.3081078038564622
 
@@ -34,7 +34,7 @@ class MNIST(Dataset):
 
     def _get_x(self, idx: int):
         x = self.data[idx].astype(np.float32)
-        x /= self.TRAIN_MAX
+        x /= self.NORMALIZE_FACTOR
         x = (x - self.MU) / self.STD
         x = torch.from_numpy(x)
         x = x.unsqueeze(0)
@@ -52,8 +52,8 @@ def create_dataloader(
     shuffle: bool = True
     ) -> DataLoader[Any]:
 
-    data = load_image_data(data_path)
-    labels = load_labels(labels_path)
+    data = load_mnist_file(data_path)
+    labels = load_mnist_file(labels_path)
 
     return DataLoader(
         dataset=MNIST(data, labels),
@@ -61,3 +61,21 @@ def create_dataloader(
         shuffle=shuffle,
         num_workers=0,
     )
+
+
+def load_mnist_file(file_name: Path) -> npt.NDArray:
+    # Load the specified file
+    if 'images' in file_name.stem:
+        offset = 16
+        shape = (-1, 28, 28)
+    else:
+        offset = 8
+        shape = (-1,)
+
+    with gzip.open(file_name, 'rb') as f:
+        data = np.frombuffer(f.read(), np.uint8, offset=offset)
+
+    # Reshape the data to a 28x28 NumPy array if it is an image file, or a 1-dimensional NumPy array if it is a label file
+    data = data.reshape(shape)
+
+    return data
