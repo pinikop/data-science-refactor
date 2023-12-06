@@ -2,7 +2,9 @@ from pathlib import Path
 from typing import Tuple, Union
 
 import numpy as np
+import numpy.typing as npt
 from matplotlib import pyplot as plt
+import matplotlib.figure
 from sklearn.metrics import ConfusionMatrixDisplay, confusion_matrix
 from src.tracking import Stage
 from torch.utils.tensorboard.writer import SummaryWriter
@@ -41,19 +43,19 @@ class TensorboardExperiment:
         tag = f'{self.stage.name}/epoch/{name}'
         self._writer.add_scalar(tag, value, step)
 
-    def add_epoch_confusion_matrix(self, y_true: list[np.array], y_pred: list[np.array], step: int):
-        y_true, y_pred = self.collapse_batches(y_true, y_pred)
-        fig = self.create_confusion_matrix(y_true, y_pred, step)
+    def add_epoch_confusion_matrix(self, y_true: list[npt.NDArray], y_pred: list[npt.NDArray], step: int):
+        y_true_concat, y_pred_concat = self.collapse_batches(y_true, y_pred)
+        fig = self.create_confusion_matrix(y_true_concat, y_pred_concat, step)
         tag = f'{self.stage.name}/epoch/confusion_matrix'
         self._writer.add_figure(tag, fig, step)
 
     @staticmethod
-    def collapse_batches(y_true: list[np.array], y_pred: list[np.array]) -> Tuple[np.ndarray, np.ndarray]:
+    def collapse_batches(y_true: list[npt.NDArray], y_pred: list[npt.NDArray]) -> Tuple[np.ndarray, np.ndarray]:
         return np.concatenate(y_true), np.concatenate(y_pred)
 
-    def create_confusion_matrix(self, y_true: np.array, y_pred: np.array, step: int) -> plt.Figure:
+    def create_confusion_matrix(self, y_true: npt.NDArray, y_pred: npt.NDArray, step: int) -> matplotlib.figure.Figure:
         cm = ConfusionMatrixDisplay(confusion_matrix(y_true, y_pred)).plot(cmap='Blues')
-        fig: plt.Figure = cm.figure_
+        fig: matplotlib.figure.Figure = cm.figure_
         ax: plt.Axes = cm.ax_
         ax.set_title(f'{self.stage.name} Epoch: {step}')
         return fig

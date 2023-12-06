@@ -2,6 +2,7 @@ from enum import Enum, auto
 from typing import Protocol, Union
 
 import numpy as np
+import numpy.typing as npt
 
 
 class Stage(Enum):
@@ -11,13 +12,13 @@ class Stage(Enum):
 
 class ExperimentTracker(Protocol):
 
-    def add_batch_metric(self, name: str, value: float, step: int):
+    def add_batch_metric(self, name: str, value: np.float32, step: int):
         """Implements logging a batch-level metric."""
 
-    def add_epoch_metric(self, name: str, value: float, step: int):
+    def add_epoch_metric(self, name: str, value: np.float32, step: int):
         """Implements logging a epoch-level metric."""
 
-    def add_epoch_confusion_matrix(self, y_true: np.array, y_pred: np.array, step: int):
+    def add_epoch_confusion_matrix(self, y_true: list[npt.NDArray], y_pred: list[npt.NDArray], step: int):
         """Implements logging a confusion matrix at epoch-level."""
 
     def add_hparams(self, hparams: dict[str, Union[str, float]], metrics: dict[str, float]):
