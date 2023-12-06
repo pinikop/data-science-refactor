@@ -34,7 +34,9 @@ class MNIST(Dataset):
 
     def _get_x(self, idx: int) -> torch.Tensor:
         x = self.data[idx].astype(np.float32)
+        # scale the data to [0, 1] range
         x /= self.NORMALIZE_FACTOR
+        # standardize the data to have zero mean and unit variance
         x = (x - self.MU) / self.STD
         x = torch.from_numpy(x)
         x = x.unsqueeze(0)
@@ -66,6 +68,7 @@ def create_dataloader(
 
     data = load_data(data_path)
     labels = load_data(labels_path)
+
     loader = DataLoader(
         dataset=MNIST(data, labels),
         batch_size=batch_size,
@@ -87,7 +90,7 @@ def load_data(file_name: Path) -> npt.NDArray:
         np.ndarray: A NumPy array containing the data from the file.
     """
 
-    # Load the specified file
+    # set the values of offset and shape for images or labels
     if 'images' in file_name.stem:
         offset = 16
         shape = (-1, 28, 28)
