@@ -20,7 +20,7 @@ class TensorboardExperiment:
 
     def set_stage(self, stage: Stage):
         self.stage = stage
-        return self
+
 
     def flush(self):
         self._writer.flush()
@@ -35,11 +35,11 @@ class TensorboardExperiment:
         else:
             raise NotADirectoryError(f'log_dir {log_dir} does not exist.')
 
-    def add_batch_metric(self, name: str, value: float, step: int):
+    def add_batch_metric(self, name: str, value: np.float32, step: int):
         tag = f'{self.stage.name}/batch/{name}'
         self._writer.add_scalar(tag, value, step)
 
-    def add_epoch_metric(self, name: str, value: float, step: int):
+    def add_epoch_metric(self, name: str, value: np.float32, step: int):
         tag = f'{self.stage.name}/epoch/{name}'
         self._writer.add_scalar(tag, value, step)
 

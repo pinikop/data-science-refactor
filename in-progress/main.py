@@ -38,12 +38,12 @@ def main():
 
     # Experiment Trackers
     log_dir = generate_tensorboard_experiment_directory(root=LOG_PATH)
-    experiment = TensorboardExperiment(log_dir=log_dir)
+    tracker = TensorboardExperiment(log_dir=log_dir)
 
     for epoch in range(EPOCHS):
-        run_epoch(test_runner, train_runner, experiment, epoch, EPOCHS)
+        run_epoch(test_runner, train_runner, tracker, epoch, EPOCHS)
 
-    experiment.flush()
+    tracker.flush()
 
 
 if __name__ == '__main__':
