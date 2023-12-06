@@ -1,4 +1,3 @@
-
 from dataclasses import dataclass, field
 
 
@@ -8,7 +7,6 @@ class Metric:
     running_total: float = 0.0
     num_updates: float = 0.0
     average: float = 0.0
-
 
     def __str__(self):
         return f"Metric(average={self.average:0.4f})"
