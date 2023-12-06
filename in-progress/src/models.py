@@ -5,7 +5,7 @@ class LinearNet(torch.nn.Module):
     def __init__(self):
         super(LinearNet, self).__init__()
 
-        self.netweork = torch.nn.Sequential(
+        self.network = torch.nn.Sequential(
             torch.nn.Flatten(),
             torch.nn.Linear(in_features=28 * 28, out_features=32),
             torch.nn.ReLU(),
@@ -14,4 +14,4 @@ class LinearNet(torch.nn.Module):
         )
 
     def forward(self, x: torch.Tensor):
-        return self.netweork(x)
+        return self.network(x)
