@@ -50,14 +50,17 @@ class MNIST(Dataset):
 
 
 def create_dataloader(
-    data_path: Path, labels_path: Path, batch_size: int, shuffle: bool = True
+    data_path: str,
+    labels_path: str,
+    batch_size: int,
+    shuffle: bool = True,
 ) -> DataLoader[Tuple[torch.Tensor, torch.Tensor]]:
     """
     Creates a DataLoader for the MNIST dataset.
 
     Args:
-        data_path (Path): Path to the MNIST data file.
-        labels_path (Path): Path to the MNIST labels file.
+        data_path (str): Path to the MNIST data file.
+        labels_path (str): Path to the MNIST labels file.
         batch_size (int): Batch size for the DataLoader.
         shuffle (bool, optional): Whether to shuffle the data during training. Defaults to True.
 
@@ -65,8 +68,8 @@ def create_dataloader(
         DataLoader[Any]: A DataLoader object for training a neural network on the MNIST dataset.
     """
 
-    data = load_data(data_path)
-    labels = load_data(labels_path)
+    data = load_data(Path(data_path))
+    labels = load_data(Path(labels_path))
 
     loader = DataLoader(
         dataset=MNIST(data, labels),
@@ -78,26 +81,26 @@ def create_dataloader(
     return loader
 
 
-def load_data(file_name: Path) -> npt.NDArray:
+def load_data(file_path: Path) -> npt.NDArray:
     """
     Load a MNIST data file and return a NumPy array.
 
     Args:
-        file_path (Path): The path to the MNIST data file.
+        file_path (str): Path to the MNIST data file.
 
     Returns:
         np.ndarray: A NumPy array containing the data from the file.
     """
 
     # set the values of offset and shape for images or labels
-    if "images" in file_name.stem:
+    if "images" in file_path.stem:
         offset = 16
         shape = (-1, 28, 28)
     else:
         offset = 8
         shape = (-1,)
 
-    with gzip.open(file_name, "rb") as f:
+    with gzip.open(file_path, "rb") as f:
         data = np.frombuffer(f.read(), np.uint8, offset=offset)
 
     # Reshape the data to a 28x28 NumPy array if it is an image file, or a 1-dimensional NumPy array if it is a label file
