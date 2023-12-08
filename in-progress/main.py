@@ -1,17 +1,16 @@
 from pathlib import Path
 
+import hydra
 import torch
+from icecream import ic
 from src.dataset import create_dataloader
 from src.models import LinearNet
 from src.runner import Runner, run_epoch
 from src.tensorboard import TensorboardExperiment
 from src.utils import generate_tensorboard_experiment_directory
 
-# Hyperparameters
-EPOCHS = 20
-LR = 5e-5
-BATCH_SIZE = 128
 ROOT_PATH = Path(__file__).parent
+
 LOG_PATH = ROOT_PATH / "runs"
 
 # Data configuration
@@ -22,15 +21,18 @@ TRAIN_DATA = DATA_DIR / "train-images-idx3-ubyte.gz"
 TRAIN_LABELS = DATA_DIR / "train-labels-idx1-ubyte.gz"
 
 
-def main():
+@hydra.main(config_path="conf", config_name="config", version_base=None)
+def main(cfg):
     # Model and Optimizer
     model = LinearNet()
-    optimizer = torch.optim.Adam(model.parameters(), lr=LR)
+    optimizer = torch.optim.Adam(model.parameters(), lr=cfg.params.lr)
 
     # Data
-    train_loader = create_dataloader(TRAIN_DATA, TRAIN_LABELS, batch_size=BATCH_SIZE)
+    train_loader = create_dataloader(
+        TRAIN_DATA, TRAIN_LABELS, batch_size=cfg.params.batch_size
+    )
     test_loader = create_dataloader(
-        TEST_DATA, TEST_LABELS, batch_size=BATCH_SIZE, shuffle=False
+        TEST_DATA, TEST_LABELS, batch_size=cfg.params.batch_size, shuffle=False
     )
 
     # Create the Runners
@@ -41,8 +43,8 @@ def main():
     log_dir = generate_tensorboard_experiment_directory(root=LOG_PATH)
     tracker = TensorboardExperiment(log_dir=log_dir)
 
-    for epoch in range(EPOCHS):
-        run_epoch(test_runner, train_runner, tracker, epoch, EPOCHS)
+    for epoch in range(cfg.params.epochs):
+        run_epoch(test_runner, train_runner, tracker, epoch, cfg.params.epochs)
 
     tracker.flush()
 
