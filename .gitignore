@@ -1,9 +1,9 @@
-**/runs/**
 **/*.pyc
 **/.DS_Store
 **/.vscode
 **/.venv
+**/runs/**
 **/data
 **/outputs
-**/multirun
 **/experiments
+**/multirun
