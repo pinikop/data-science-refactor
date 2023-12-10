@@ -1,3 +1,4 @@
+import os
 from pathlib import Path
 from typing import Union
 
@@ -24,3 +25,15 @@ def generate_tensorboard_experiment_directory(
     experiment = root_path / experiment
     experiment.mkdir(parents=parents)
     return experiment.as_posix()
+
+
+def set_cwd_2_file_dir(file_path: str) -> None:
+    """
+    Changes the current working directory to the directory of the specified file.
+
+    Args:
+        file_path (str): The path to the file.
+    """
+    file_path = os.path.abspath(file_path)
+    file_dir = os.path.dirname(file_path)
+    os.chdir(file_dir)
