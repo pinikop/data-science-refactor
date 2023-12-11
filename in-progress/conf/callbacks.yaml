@@ -1,0 +1,5 @@
+# @package _global_
+hydra:
+  callbacks:
+    custom:
+      _target_: src.hydra_callbacks.HydraCallbacks

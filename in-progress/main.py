@@ -1,12 +1,10 @@
 import hydra
 import torch
 from config import MNISTConfig
-from omegaconf import OmegaConf
 from src.dataset import create_dataloader
 from src.models import LinearNet
 from src.runner import Runner, run_epoch
 from src.tensorboard import TensorboardExperiment
-from src.utils import generate_tensorboard_experiment_directory, set_cwd_2_file_dir
 
 
 @hydra.main(
@@ -45,19 +43,5 @@ def main(cfg: MNISTConfig):
     tracker.flush()
 
 
-@hydra.main(
-    config_path="conf",
-    config_name="meta_config",
-    version_base=None,
-)
-def pre(mcfg):
-    output_dir = generate_tensorboard_experiment_directory(root="./outputs/")
-    cfg = OmegaConf.load(mcfg.config.file)
-    cfg.hydra.run.dir = output_dir
-    OmegaConf.save(cfg, mcfg.config.file)
-
-
 if __name__ == "__main__":
-    set_cwd_2_file_dir(__file__)
-    pre()
     main()

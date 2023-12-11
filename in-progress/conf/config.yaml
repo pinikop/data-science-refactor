@@ -1,6 +1,10 @@
+defaults:
+  # - /hydra/callbacks:
+  - callbacks
+  - _self_
 hydra:
   run:
-    dir: /home/pini/projects/data-science-refactor/in-progress/outputs/1
+    dir: './experiments/'
 paths:
   data: ${hydra:runtime.cwd}/data
   log: ${hydra:run.dir}
@@ -13,3 +17,6 @@ params:
   epochs: 3
   lr: 5.0e-05
   batch_size: 128
+
+
+

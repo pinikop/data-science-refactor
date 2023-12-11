@@ -1,6 +1,0 @@
-hydra:
-  run:
-    dir: /home/pini/projects/data-science-refactor/in-progress/outputs/tmp/
-config:
-  root: ./conf
-  file: ${config.root}/config.yaml
