@@ -1,5 +1,4 @@
 defaults:
-  # - /hydra/callbacks:
   - callbacks
   - _self_
 hydra:
