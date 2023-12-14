@@ -16,15 +16,15 @@ class Runner:
         loader: DataLoader[Tuple[torch.Tensor, torch.Tensor]],
         model: torch.nn.Module,
         optimizer: Optional[torch.optim.Optimizer] = None,
-        # loss: Optional[torch.nn.Module] = None
     ) -> None:
-        self.iteration = 0
         self.loader = loader
         self.model = model
         self.optimizer = optimizer
-        self.accuracy_metric = Metric()
+        self.accuracy_metric: Metric = Metric()
         if self.optimizer is not None:
             self.compute_loss = torch.nn.CrossEntropyLoss(reduction="mean")
+
+        self.iteration: int = 0
 
         self.y_true_batches: list[npt.NDArray] = []
         self.y_pred_batches: list[npt.NDArray] = []
