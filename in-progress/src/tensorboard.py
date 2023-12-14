@@ -13,7 +13,7 @@ from torch.utils.tensorboard.writer import SummaryWriter
 class TensorboardExperiment:
     stage: Stage
 
-    def __init__(self, log_dir: str, create=True) -> None:
+    def __init__(self, log_dir: Path, create=True) -> None:
         self._validate_log_dir(log_dir, create=create)
         self._writer = SummaryWriter(log_dir=log_dir)
         plt.ioff()
@@ -27,8 +27,8 @@ class TensorboardExperiment:
         self._writer.flush()
 
     @staticmethod
-    def _validate_log_dir(log_dir, create=True) -> None:
-        log_dir = Path(log_dir).resolve()
+    def _validate_log_dir(log_dir: Path, create: bool = True) -> None:
+        log_dir = log_dir.resolve()
         if log_dir.exists():
             return
         elif not log_dir.exists() and create:
@@ -38,11 +38,11 @@ class TensorboardExperiment:
 
     def add_batch_metric(self, name: str, value: np.float32, step: int) -> None:
         tag = f"{self.stage.name}/batch/{name}"
-        self._writer.add_scalar(tag, value, step)
+        self._writer.add_scalar(tag, value, global_step=step)
 
     def add_epoch_metric(self, name: str, value: np.float32, step: int) -> None:
         tag = f"{self.stage.name}/epoch/{name}"
-        self._writer.add_scalar(tag, value, step)
+        self._writer.add_scalar(tag, value, global_step=step)
 
     def add_epoch_confusion_matrix(
         self, y_true: list[npt.NDArray], y_pred: list[npt.NDArray], step: int
@@ -55,7 +55,7 @@ class TensorboardExperiment:
     @staticmethod
     def collapse_batches(
         y_true: list[npt.NDArray], y_pred: list[npt.NDArray]
-    ) -> Tuple[np.ndarray, np.ndarray]:
+    ) -> Tuple[npt.NDArray, npt.NDArray]:
         return np.concatenate(y_true), np.concatenate(y_pred)
 
     def create_confusion_matrix(

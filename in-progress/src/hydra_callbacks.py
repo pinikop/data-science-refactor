@@ -21,10 +21,10 @@ class HydraCallbacks(Callback):
         Args:
             config (DictConfig): configuration object of the current run.
         """
-        file_path = Path(os.path.abspath(__file__))
+        file_path = Path(__file__).resolve()
         root_dir = file_path.parents[1]
         os.chdir(root_dir)
-        config.hydra.runtime.cwd = root_dir
+        config.hydra.runtime.cwd = root_dir.as_posix()
 
     @staticmethod
     def _set_output_dir(config: DictConfig) -> None:
