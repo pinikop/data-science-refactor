@@ -1,6 +1,7 @@
 import hydra
 import torch
-from config import MNISTConfig
+from omegaconf import DictConfig
+from src.config_parser import dictconfig_2_mnistconfig
 from src.dataset import create_dataloader
 from src.models import LinearNet
 from src.runner import Runner, run_epoch
@@ -12,21 +13,22 @@ from src.tensorboard import TensorboardExperiment
     config_name="config",
     version_base=None,
 )
-def main(cfg: MNISTConfig):
+def main(cfg: DictConfig):
     # Model and Optimizer
+    mcfg = dictconfig_2_mnistconfig(cfg)
     model = LinearNet()
-    optimizer = torch.optim.Adam(model.parameters(), lr=cfg.params.lr)
+    optimizer = torch.optim.Adam(model.parameters(), lr=mcfg.params.lr)
 
     # Data
     train_loader = create_dataloader(
-        data_path=cfg.files.train_data,
-        labels_path=cfg.files.train_labels,
-        batch_size=cfg.params.batch_size,
+        data_path=mcfg.files.train_data,
+        labels_path=mcfg.files.train_labels,
+        batch_size=mcfg.params.batch_size,
     )
     test_loader = create_dataloader(
-        data_path=cfg.files.test_data,
-        labels_path=cfg.files.test_labels,
-        batch_size=cfg.params.batch_size,
+        data_path=mcfg.files.test_data,
+        labels_path=mcfg.files.test_labels,
+        batch_size=mcfg.params.batch_size,
         shuffle=False,
     )
 
@@ -35,10 +37,10 @@ def main(cfg: MNISTConfig):
     train_runner = Runner(train_loader, model, optimizer)
 
     # Experiment Trackers
-    tracker = TensorboardExperiment(log_dir=cfg.paths.log)
+    tracker = TensorboardExperiment(log_dir=mcfg.paths.log)
 
-    for epoch in range(cfg.params.epochs):
-        run_epoch(test_runner, train_runner, tracker, epoch, cfg.params.epochs)
+    for epoch in range(mcfg.params.epochs):
+        run_epoch(test_runner, train_runner, tracker, epoch, mcfg.params.epochs)
 
     tracker.flush()
 

@@ -50,8 +50,8 @@ class MNIST(Dataset):
 
 
 def create_dataloader(
-    data_path: str,
-    labels_path: str,
+    data_path: Path,
+    labels_path: Path,
     batch_size: int,
     shuffle: bool = True,
 ) -> DataLoader[Tuple[torch.Tensor, torch.Tensor]]:
@@ -59,17 +59,17 @@ def create_dataloader(
     Creates a DataLoader for the MNIST dataset.
 
     Args:
-        data_path (str): Path to the MNIST data file.
-        labels_path (str): Path to the MNIST labels file.
+        data_path (Path): Path to the MNIST data file.
+        labels_path (Path): Path to the MNIST labels file.
         batch_size (int): Batch size for the DataLoader.
         shuffle (bool, optional): Whether to shuffle the data during training. Defaults to True.
 
     Returns:
-        DataLoader[Any]: A DataLoader object for training a neural network on the MNIST dataset.
+        DataLoader[Tuple[torch.Tensor, torch.Tensor]]: A DataLoader object for training a neural network on the MNIST dataset.
     """
 
-    data = load_data(Path(data_path))
-    labels = load_data(Path(labels_path))
+    data = load_data(data_path)
+    labels = load_data(labels_path)
 
     loader = DataLoader(
         dataset=MNIST(data, labels),
