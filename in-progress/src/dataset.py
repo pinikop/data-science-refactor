@@ -93,6 +93,7 @@ def load_data(file_path: Path) -> npt.NDArray:
     """
 
     # set the values of offset and shape for images or labels
+    print(file_path.as_posix())
     if "images" in file_path.stem:
         offset = 16
         shape = (-1, 28, 28)

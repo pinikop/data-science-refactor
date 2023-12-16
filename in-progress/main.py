@@ -1,9 +1,9 @@
 import hydra
-import torch
 from omegaconf import DictConfig
-from src.config_parser import dictconfig_2_mnistconfig
+from src.config_parser import MNISTConfig
 from src.dataset import create_dataloader
 from src.models import LinearNet
+from src.optimizers import get_optimizer
 from src.runner import Runner, run_epoch
 from src.tensorboard import TensorboardExperiment
 
@@ -14,11 +14,10 @@ from src.tensorboard import TensorboardExperiment
     version_base=None,
 )
 def main(cfg: DictConfig):
+    mcfg = MNISTConfig.from_dictconfig(cfg)
     # Model and Optimizer
-    mcfg = dictconfig_2_mnistconfig(cfg)
     model = LinearNet()
-    optimizer = torch.optim.Adam(model.parameters(), lr=mcfg.params.lr)
-
+    optimizer = get_optimizer(mcfg, model)
     # Data
     train_loader = create_dataloader(
         data_path=mcfg.files.train_data,

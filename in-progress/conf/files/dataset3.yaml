@@ -1,0 +1,4 @@
+test_data: ${paths.data}/ds2/test-images.gz
+test_labels: ${paths.data}/ds2/test-labels.gz
+train_data: ${paths.data}/ds2/train-images.gz
+train_labels: ${paths.data}/ds2/train-labels.gz
