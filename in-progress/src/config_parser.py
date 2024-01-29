@@ -1,8 +1,7 @@
 from pathlib import Path
-from typing import Any, Dict, Optional, Tuple, Type, Union
 
 from omegaconf import DictConfig, OmegaConf
-from pydantic import BaseModel, ConfigDict, field_validator
+from pydantic import BaseModel, ConfigDict
 
 
 class BaseOptimizer(BaseModel):
@@ -41,14 +40,8 @@ class MNISTConfig(BaseModel):
     paths: Paths
     files: Files
     params: Params
-    optimizer: Union[SGDOptimizer, ADAMOptimizer]
-
-    # @field_validator("optimizer", mode="after")
-    # def validate_optimizer(cls, v):
-    #     if not issubclass(v, BaseOptimizer):
-    #         raise ValueError(f"{v} is not a subclass of BaseOptimizer")
-    #     return v
+    optimizer: BaseOptimizer
 
     @classmethod
     def from_dictconfig(cls, cfg: DictConfig) -> "MNISTConfig":
-        return MNISTConfig(**OmegaConf.to_container(cfg, resolve=True))  # type: ignore
+        return MNISTConfig(**(OmegaConf.to_container(cfg, resolve=True)))  # type: ignore
