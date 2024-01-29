@@ -1,5 +1,10 @@
 # Data Science Project Refactoring
 
+### my take on the project
+Extending the project, I keep modifying it and add support for more components such as configuration files and experiment tracking.
+
+
+### Original Message
 This repository contains the example code of the Data Science / MNIST project refactoring miniseries. Here are the links to the videos:
 
 - Part 1: https://youtu.be/ka70COItN40
